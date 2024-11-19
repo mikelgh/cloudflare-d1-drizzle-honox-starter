@@ -16,7 +16,7 @@ export default createRoute(async (c) => {
           </h1>
           <form method="POST" action={`/todos/clear_completed`}>
             <button class="text-blue-600 hover:underline" type="submit">
-              Clear completed tasks
+              清空已完成任务
             </button>
           </form>
         </div>
