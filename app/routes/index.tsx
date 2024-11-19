@@ -38,8 +38,15 @@ export default createRoute(async (c) => {
                   onChange="this.form.submit()"
                 />{' '}
                 {todo.description}
+                <span class="text-gray-500 text-sm">
+                  {' '}
+                  (创建时间: {new Date(todo.createdAt).toLocaleString()})
+                </span>
                 {todo.completed && todo.completedAt ? (
-                  <span class="text-gray-500 text-sm"> (完成时间: {new Date(todo.completedAt * 1000).toLocaleString()})</span>
+                  <span class="text-gray-500 text-sm">
+                    {' '}
+                    (完成时间: {new Date(todo.completedAt * 1000).toLocaleString()})
+                  </span>
                 ) : null}
               </form>
             </li>
