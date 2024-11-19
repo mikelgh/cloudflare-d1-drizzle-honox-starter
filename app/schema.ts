@@ -8,7 +8,7 @@ export const todos = sqliteTable('todos', {
   description: text('title').notNull(), // 任务描述，不能为空
   completed: integer('completed', { mode: 'boolean' }).default(false), // 任务是否完成，默认为 false
   createdAt: integer('created_at', { mode: 'timestamp' }).default(sql`(strftime('%s', 'now'))`), // 创建时间，默认为当前时间
-  completedAt: integer('completed_at', { mode: 'timestamp', nullable: true }) // 完成时间，可以为空
+  completedAt: integer('completed_at', { mode: 'number', nullable: true }) // 完成时间，整数类型，可为空
 })
 
 /* 原代码
