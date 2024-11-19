@@ -4,15 +4,18 @@ import { z } from 'zod'
 import { zValidator } from '@hono/zod-validator'
 import { todos } from '@/schema'
 
+// 定义首页路由
 export default createRoute(async (c) => {
+  // 从数据库中获取所有任务
   const results = await c.var.db.select().from(todos).all()
 
+  // 渲染页面
   return c.render(
     <>
       <div class="bg-white md:shadow p-4">
         <div class="flex items-center mb-4">
           <h1 class="flex-1 font-bold text-xl">
-            Tracking {results.length} {results.length == 1 ? 'task' : 'tasks'}
+            当前有 {results.length} 个任务
           </h1>
           <form method="POST" action={`/todos/clear_completed`}>
             <button class="text-blue-600 hover:underline" type="submit">
@@ -21,7 +24,7 @@ export default createRoute(async (c) => {
           </form>
         </div>
 
-        {results.length == 0 ? <p class="text-gray-600">No tasks yet. Create one below.</p> : null}
+        {results.length == 0 ? <p class="text-gray-600">还没有任务，请在下方创建一个。</p> : null}
 
         <ul>
           {results.map((todo) => (
@@ -35,6 +38,9 @@ export default createRoute(async (c) => {
                   onChange="this.form.submit()"
                 />{' '}
                 {todo.description}
+                {todo.completed && todo.completedAt ? (
+                  <span class="text-gray-500 text-sm"> (完成时间: {new Date(todo.completedAt * 1000).toLocaleString()})</span>
+                ) : null}
               </form>
             </li>
           ))}
@@ -47,7 +53,7 @@ export default createRoute(async (c) => {
             type="text"
             name="description"
             class="p-4 w-full"
-            placeholder="📝 Write a new task. Press enter/return to submit"
+            placeholder="📝 写一个新任务，按回车键提交"
             autofocus
             autocomplete="off"
           />
@@ -57,10 +63,12 @@ export default createRoute(async (c) => {
   )
 })
 
+// 定义插入任务的模式
 const insertSchema = createInsertSchema(todos, {
   id: z.undefined()
 })
 
+// 定义 POST 路由，用于添加新任务
 export const POST = createRoute(zValidator('form', insertSchema), async (c) => {
   const data = c.req.valid('form')
   await c.var.db.insert(todos).values(data)
